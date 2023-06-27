@@ -22,6 +22,9 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Switch from '@mui/material/Switch';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal, closeModal } from '../redux/modalTaskSlice'
+
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
@@ -82,6 +85,35 @@ function Sidebar(props: SidebarProps) {
 
     const { open, onClose } = props;
 
+  // MY MEMO: code for modal with redux
+
+  const dispatch = useDispatch();
+  interface RootState {
+    modal: {
+      open: boolean;
+    };
+    sidebar: {
+      open: boolean;
+    }
+  }  
+
+  // const isOpen = useSelector((state: RootState) => state.modal.open);
+
+  const { modal, sidebar } = useSelector((state: RootState) => ({
+    modal: state.modal.open,
+    sidebar: state.sidebar.open,
+  }));
+
+  
+  const handleOpenMTD = () => {
+    dispatch(openModal());
+  };
+
+  const handleCloseMTD = () => {
+    dispatch(closeModal());
+  };
+
+  //
 
   return (
     <Box
@@ -89,14 +121,14 @@ function Sidebar(props: SidebarProps) {
         width: "100%",
         height: "100vh",
         maxWidth: 360,
-        bgcolor: "#f9f8f1",
+        bgcolor: "rgba(249, 248, 241, 0.85)",
         transform: open ? 'translateX(0)' : 'translateX(-100%)'
       }}
       style={{ transition: 'all 0.3s ease-in-out' }}
     >
       <List sx={{pt:0, pb:0}} component="nav" aria-label="workspace">
         
-        <ListItemButton onClick={handleClick_w}>
+        <ListItemButton onClick={handleClick_w} disableRipple>
           <ListItemIcon>
             <CabinIcon />
           </ListItemIcon>
@@ -155,7 +187,7 @@ function Sidebar(props: SidebarProps) {
       {/* <Divider /> */}
       <List sx={{pt:0, pb:0}}  component="nav" aria-label="action">
         
-        <ListItemButton onClick={handleClick_a}>
+        <ListItemButton onClick={handleClick_a} disableRipple>
           <ListItemIcon>
             <ShapeLineIcon />
           </ListItemIcon>
@@ -168,7 +200,8 @@ function Sidebar(props: SidebarProps) {
               disableRipple
               sx={{ pl: 4 }}
               // selected={selectedIndex === 4}
-              onClick={(event) => handleListItemClick(event, 4)}
+              // onClick={(event) => handleListItemClick(event, 4)}
+              onClick={handleOpenMTD}
             >
               <ListItemIcon sx={{ color: "Sienna" }}>
                 <AddTaskIcon />
@@ -184,10 +217,8 @@ function Sidebar(props: SidebarProps) {
               <ListItemIcon sx={{ color: "DarkOliveGreen" }}>
                 <RemoveCircleOutlineIcon />
               </ListItemIcon>
-              <ListItemText primary="Delete Task" />
-            </ListItemButton>
-
-            
+              <ListItemText primary="Delete Selected Tasks" />
+            </ListItemButton>           
             
           </List>
         </Collapse>
@@ -195,7 +226,7 @@ function Sidebar(props: SidebarProps) {
       {/* <Divider /> */}
       <List sx={{pt:0, pb:0}}  component="nav" aria-label="style">
         
-        <ListItemButton onClick={handleClick_s}>
+        <ListItemButton onClick={handleClick_s} disableRipple>
           <ListItemIcon>
             <StyleIcon />
           </ListItemIcon>

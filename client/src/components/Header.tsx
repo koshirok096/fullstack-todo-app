@@ -9,7 +9,6 @@ import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -21,7 +20,6 @@ import logo from '../main-logo.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, closeModal } from '../redux/modalTaskSlice'
 import { openSidebar, closeSidebar } from '../redux/openSidebarSlice'
-import Sidebar from './Sidebar';
 
 // const Search = styled('div')(({ theme }) => ({
 //     position: 'relative',
@@ -183,15 +181,18 @@ function Header() {
 
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <>
       <AppBar
        position="static"
        style={{ 
         color:'black',
-        backgroundColor: 'white'
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        boxShadow: 'none'
        }}
        >
-        <Toolbar>
+        <Toolbar
+        sx={{ height: '64px' }}
+        >
             <IconButton 
               sx = {{ color:"grey", mr:1 }}
               size="large"
@@ -222,7 +223,7 @@ function Header() {
                 fontWeight: 'bold'
             }}
           >
-            Task<span style={{ fontWeight:'400' }}>Buddy</span>
+            Task<span style={{ fontWeight:'400' }}>Chaska</span>
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -280,9 +281,7 @@ function Header() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      <Sidebar open={sidebar} onClose={handleCloseSidebar} />
-      
-    </Box>
+    </>
   );
 }
 
