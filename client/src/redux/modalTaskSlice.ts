@@ -14,12 +14,10 @@ const modalTaskSlice = createSlice ({
     reducers: {
         openModal: (state) => {
             state.open = true;
-        },
-        
+        },        
         closeModal:  (state) => {
             state.open = false;
         }
-                
     }    
 });
 

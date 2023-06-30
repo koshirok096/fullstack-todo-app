@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import React, { useState, useEffect } from "react";
+import React, { useState, ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -21,10 +21,14 @@ import Favorite from "@mui/icons-material/Favorite";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+
+import Sidebar from './Sidebar';
+import { useDispatch, useSelector } from 'react-redux';
+import { openSidebar, closeSidebar } from '../redux/openSidebarSlice'
 
 
 function Todo() {
@@ -49,22 +53,39 @@ function Todo() {
   // for pinned label
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
+  // style change by sidebar open/close
+
+  const dispatch = useDispatch();
+  interface RootState {
+    sidebar: {
+      open: boolean;
+    };
+  }
+
+  const { open } = useSelector((state: RootState) => ({
+    open: state.sidebar.open,
+  }));
+
+
   // WIP Status?
-
-  const [status, setStatus] = React.useState('');
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setStatus(event.target.value as string);
+  const [status, setStatus] = useState("");
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setStatus(event.target.value);
   };
+
 
 
   return (
     <Box
       sx={{
+        transition: 'all 0.6s ease-in-out',
         position: "absolute",
         top: 64,
-        left: 360,
-        width: "calc(100% - 360px)",
+        left: open ? 360 : 0,
+        width: open ? "calc(100% - 360px)" : '100%',
+        // transform: open ? "translateX(0)" : "translateX(-100%)",
+        // left: 0,
+        // width: 100%
       }}
     >
       <UpperInfoBar />
@@ -92,34 +113,81 @@ function Todo() {
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
+                      '&:hover, &:focus-visible': {
+                        outline: 'none',
+                      },
                     }}
                   >
-<Box sx={{ pr:3, position: 'absolute', right: 0 }}> {/* Position the FormControl absolutely */}
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Status</InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Status"
-                          value={status} // Updated prop name
-                          onChange={handleChange}
-                        >
-                          <MenuItem value={'Active'}>Active</MenuItem>
-                          <MenuItem value={'On Hold'}>On Hold</MenuItem>
-                          <MenuItem value={'Unassigned'}>Unassigned</MenuItem>
-                        </Select>
-                      </FormControl>
+                    <Box sx={{
+                       mr: 2.5, 
+                       position: 'relative',
+                       background: 'MidnightBlue',
+                       width: '120px',
+                       borderRadius: '200px',
+                       height: '33px',
+                      }}>
+                      {" "}
+                      {/* Position the FormControl absolutely */}
+                      <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%'
+                      }}>
+                        <select
+                          style={{
+                            border: 'none',
+                            outline: 'none',
+                            background: 'transparent',
+                            backgroundImage: 'none',
+                            boxShadow: 'none',
+                            color: 'White',
+                            fontWeight: 'bold'
+                            // WebkitAppearance: 'none',
+                            // appearance: 'none',                        
+                          }}
+                          value={status}
+                          onChange={handleChange}>
+                          <option
+                            style={{
+                              textAlign: 'center',
+                            }}
+                            value="Active"
+                            // onMouseEnter={handleMouseEnter}
+                            // onMouseLeave={handleMouseLeave}                    
+                          >Active
+                          </option>
+                          <option
+                            style={{
+                              textAlign: 'center',
+                            }}
+                            value="On Hold"
+                            // onMouseEnter={handleMouseEnter}
+                            // onMouseLeave={handleMouseLeave}                    
+                          >On Hold
+                          </option>
+                          <option
+                            style={{
+                              textAlign: 'center',
+                            }}
+                           value="Unassigned"
+                          //  onMouseEnter={handleMouseEnter}
+                          //  onMouseLeave={handleMouseLeave}                   
+                          >Unassigned
+                          </option>
+                        </select>
+                    </Box>
                     </Box>
                     <Stopwatch />
-                    <Box sx={{ textAlign: "center", pr: 3 }}>
-                      <Typography variant="body1" component="p">
+                    <Box sx={{ textAlign: "center", pr: 2 }}>
+                      <Typography variant="body1" component="p" sx={{ fontSize: "1.2rem" }}>
                         <span>EST. </span>
                         <span>25:00</span>
                       </Typography>
                       <IconButton edge="end" aria-label="edit">
                         <EditNoteIcon
                           sx={{
-                            color: "Turquoise",
+                            color: "LemonChiffon",
                           }}
                         />
                       </IconButton>
@@ -128,7 +196,7 @@ function Todo() {
                       <DeleteIcon
                         sx={{
                           color: "Azure",
-                          p: 3
+                          p: 2,
                         }}
                       />
                     </IconButton>
@@ -137,9 +205,10 @@ function Todo() {
               }
               disablePadding
               sx={{
-                backgroundColor: "rgba(0,0,0,0.7)",
+                backgroundColor: "rgba(0,0,0,0.65)",
                 borderRadius: "5px",
-                py: 2,
+                height: "70px",
+                // py: 1.5,
                 mb: 1,
               }}
             >
@@ -148,6 +217,12 @@ function Todo() {
                 onClick={handleToggle(value)}
                 dense
                 disableRipple
+                sx={{
+                  height: "100%",
+                  '&:hover': {
+                    // bgcolor: "rgba(0,0,0,0.2)",
+                  },    
+                }}
               >
                 <ListItemIcon
                   sx={{
@@ -158,12 +233,12 @@ function Todo() {
                   }}
                 >
                   <Checkbox
-                      {...label}
-                      disableRipple
-                      icon={<BookmarkBorderIcon />}
-                      checkedIcon={<BookmarkIcon sx={{ color: "Crimson" }} />}
-                      sx={{ pr:4, color: "Crimson" }}
-                    />
+                    {...label}
+                    disableRipple
+                    icon={<BookmarkBorderIcon />}
+                    checkedIcon={<BookmarkIcon sx={{ color: "Crimson" }} />}
+                    sx={{ pr: 4, color: "Crimson" }}
+                  />
 
                   <Checkbox
                     edge="start"
@@ -172,7 +247,7 @@ function Todo() {
                     inputProps={{ "aria-labelledby": labelId }}
                     icon={<CircleOutlinedIcon />}
                     checkedIcon={<CheckCircleOutlineOutlinedIcon />}
-                    sx={{ color: "white", transform: "scale(1.7)", mr:3, }}
+                    sx={{ color: "white", transform: "scale(1.7)", mr: 3 }}
                   />
                 </ListItemIcon>
                 <ListItemText

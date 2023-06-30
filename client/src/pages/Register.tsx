@@ -13,15 +13,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import mood1 from '../mood-4-min.png';
+import logo from '../main-logo.png';
+import mood1 from '../mood-1-min.png';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
+      TaskChaska{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -62,20 +61,62 @@ function Register() {
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
-              my: 8,
-              mx: 4,
               display: 'flex',
               flexDirection: 'column',
+              justifyContent: 'center',
               alignItems: 'center',
+              height: '100vh',
+              pb:3
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              >
+              <img
+                src={logo}
+                alt="mainlogo"
+                width="100px"
+                height="100px"
+                style={{
+                  padding: '12px'
+                  }}
+                />
+              <Typography
+                variant="h1"
+                noWrap
+                component="h1"
+                sx={{ display: { xs: 'none', sm: 'block' }, pl:2 }}
+                style={{
+                    fontFamily: "'Pathway Extreme', sans-serif",
+                    fontSize:'42px',
+                    fontWeight: 'bold'
+                }}
+              >
+                Task<span style={{ fontWeight:'400' }}>Chaska</span>
+              </Typography>
+            </Box>
+            <Typography component="h5" variant="h5" sx={{ pt:3, fontWeight: 'bold', fontSize:'40px', fontFamily: "'Pathway Extreme', sans-serif"}}>
+              Create your account
+            </Typography>
+            <Typography variant="subtitle1" sx={{ py:1, fontSize:'22px', color:'grey', fontFamily: "'Roboto', sans-serif"}}>
+              Donec id elit non mi porta gravida at eget metus.
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="name"
+                label="Name"
+                name="name"
+                autoComplete="name"
+                autoFocus
+              />
               <TextField
                 margin="normal"
                 required
@@ -84,7 +125,6 @@ function Register() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                autoFocus
               />
               <TextField
                 margin="normal"
@@ -96,27 +136,19 @@ function Register() {
                 id="password"
                 autoComplete="current-password"
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, fontSize: '18px' }}
               >
-                Sign In
+                Register
               </Button>
               <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
+                <Grid item sx={{fontSize:'16px'}}>
+                  Already have an account?&nbsp;
+                  <Link href="/signin" variant="body2" sx={{fontSize:'16px'}}>
+                    {"Sign In"}
                   </Link>
                 </Grid>
               </Grid>

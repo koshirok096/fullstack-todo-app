@@ -23,12 +23,27 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Switch from '@mui/material/Switch';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { openModal, closeModal } from '../redux/modalTaskSlice'
+import { openModal, closeModal } from '../redux/modalTaskSlice';
+import { openModalTheme, closeModalTheme } from '../redux/modalThemeSlice';
+import ModalTheme from './ModalTheme';
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
 }
+
+interface RootState {
+  modal: {
+    open: boolean;
+  };
+  modalTheme: {
+    open: boolean;
+  };
+  sidebar: {
+    open: boolean;
+  };
+}
+
 
 function Sidebar(props: SidebarProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -51,16 +66,17 @@ function Sidebar(props: SidebarProps) {
   const handleToggle_d = (value: string) => () => {
     const currentIndex = checked_d.indexOf(value);
     const newCheckedD = [...checked_d];
-
+  
     if (currentIndex === -1) {
       newCheckedD.push(value);
     } else {
       newCheckedD.splice(currentIndex, 1);
     }
-
+  
     setCheckedD(newCheckedD);
+    setDarkModeChecked(newCheckedD.includes('Dark Mode')); // setDarkModeCheckedの代わりにsetDarkModeを使用
   };
-
+  
   const [checked_t, setCheckedT] = React.useState(['Theme']);
 
   const handleToggle_t = (value: string) => () => {
@@ -83,28 +99,16 @@ function Sidebar(props: SidebarProps) {
     setSelectedIndex(index);
   };
 
-    const { open, onClose } = props;
-
-  // MY MEMO: code for modal with redux
+  const { open, onClose } = props;
 
   const dispatch = useDispatch();
-  interface RootState {
-    modal: {
-      open: boolean;
-    };
-    sidebar: {
-      open: boolean;
-    }
-  }  
 
-  // const isOpen = useSelector((state: RootState) => state.modal.open);
-
-  const { modal, sidebar } = useSelector((state: RootState) => ({
+  const { modal, modalTheme, sidebar } = useSelector((state: RootState) => ({
     modal: state.modal.open,
+    modalTheme: state.modalTheme.open,
     sidebar: state.sidebar.open,
   }));
 
-  
   const handleOpenMTD = () => {
     dispatch(openModal());
   };
@@ -113,23 +117,32 @@ function Sidebar(props: SidebarProps) {
     dispatch(closeModal());
   };
 
-  //
+  const handleOpenTHM = () => {
+    dispatch(openModalTheme());
+  };
+
+  const handleCloseTHM = () => {
+    dispatch(closeModalTheme());
+  };
+
+  const [darkModeChecked, setDarkModeChecked] = React.useState(checked_d.indexOf('Dark Mode') !== -1);
 
   return (
     <Box
       sx={{
         width: "100%",
-        height: "100vh",
+        height: "calc(100vh - 64px)",
         maxWidth: 360,
-        bgcolor: "rgba(249, 248, 241, 0.85)",
+        backgroundColor: darkModeChecked ? 'rgba(249, 248, 241, 0.85)' : 'rgba(33, 33, 33, 0.85)',
+        color: darkModeChecked ? 'inherit' : 'Ivory',    
         transform: open ? 'translateX(0)' : 'translateX(-100%)'
       }}
-      style={{ transition: 'all 0.3s ease-in-out' }}
+      style={{ transition: 'all 0.6s ease-in-out' }}
     >
       <List sx={{pt:0, pb:0}} component="nav" aria-label="workspace">
         
         <ListItemButton onClick={handleClick_w} disableRipple>
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: darkModeChecked ? '#626262' : 'Ivory', }}>
             <CabinIcon />
           </ListItemIcon>
           <ListItemText primary="Workspace" />
@@ -142,7 +155,7 @@ function Sidebar(props: SidebarProps) {
               selected={selectedIndex === 0}
               onClick={(event) => handleListItemClick(event, 0)}
             >
-              <ListItemIcon sx={{ color: "BlueViolet" }}>
+              <ListItemIcon sx={{ color: "SlateBlue" }}>
                 <InboxIcon />
               </ListItemIcon>
               <ListItemText primary="Inbox" />
@@ -158,18 +171,16 @@ function Sidebar(props: SidebarProps) {
               </ListItemIcon>
               <ListItemText primary="Active" />
             </ListItemButton>
-            
             <ListItemButton
               sx={{ pl: 4 }}
               selected={selectedIndex === 2}
               onClick={(event) => handleListItemClick(event, 2)}
             >
-              <ListItemIcon sx={{ color: "CornflowerBlue" }}>
+              <ListItemIcon sx={{ color: "SteelBlue" }}>
                 <TaskAltIcon />
               </ListItemIcon>
               <ListItemText primary="Completed" />
             </ListItemButton>
-            
             <ListItemButton
               sx={{ pl: 4 }}
               selected={selectedIndex === 3}
@@ -180,15 +191,12 @@ function Sidebar(props: SidebarProps) {
               </ListItemIcon>
               <ListItemText primary="Pinned" />
             </ListItemButton>
-            
           </List>
         </Collapse>
       </List>
-      {/* <Divider /> */}
       <List sx={{pt:0, pb:0}}  component="nav" aria-label="action">
-        
         <ListItemButton onClick={handleClick_a} disableRipple>
-          <ListItemIcon>
+        <ListItemIcon sx={{ color: darkModeChecked ? '#626262' : 'Ivory', }}>
             <ShapeLineIcon />
           </ListItemIcon>
           <ListItemText primary="Action" />
@@ -199,11 +207,9 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               disableRipple
               sx={{ pl: 4 }}
-              // selected={selectedIndex === 4}
-              // onClick={(event) => handleListItemClick(event, 4)}
               onClick={handleOpenMTD}
             >
-              <ListItemIcon sx={{ color: "Sienna" }}>
+              <ListItemIcon sx={{ color: "SandyBrown" }}>
                 <AddTaskIcon />
               </ListItemIcon>
               <ListItemText primary="Add Task" />
@@ -211,23 +217,20 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               disableRipple
               sx={{ pl: 4 }}
-              // selected={selectedIndex === 5}
               onClick={(event) => handleListItemClick(event, 5)}
             >
-              <ListItemIcon sx={{ color: "DarkOliveGreen" }}>
+              <ListItemIcon sx={{ color: "SeaGreen" }}>
                 <RemoveCircleOutlineIcon />
               </ListItemIcon>
               <ListItemText primary="Delete Selected Tasks" />
             </ListItemButton>           
-            
           </List>
         </Collapse>
       </List>
-      {/* <Divider /> */}
       <List sx={{pt:0, pb:0}}  component="nav" aria-label="style">
         
         <ListItemButton onClick={handleClick_s} disableRipple>
-          <ListItemIcon>
+        <ListItemIcon sx={{ color: darkModeChecked ? '#626262' : 'Ivory', }}>
             <StyleIcon />
           </ListItemIcon>
           <ListItemText primary="Style" />
@@ -239,14 +242,14 @@ function Sidebar(props: SidebarProps) {
               disableRipple
               sx={{ pl: 4 }}
             >
-              <ListItemIcon sx={{ color: "Purple" }}>
+              <ListItemIcon sx={{ color: "MediumSlateBlue" }}>
                 <DarkModeOutlinedIcon />
               </ListItemIcon>
               <ListItemText primary="Dark Mode" />
               <Switch
                 edge="end"
                 onChange={handleToggle_d('Dark Mode')}
-                checked={checked_d.indexOf('Dark Mode') !== -1}
+                checked={!darkModeChecked}
                 inputProps={{
                   'aria-labelledby': 'switch-list-label-darkmode',
                 }}
@@ -255,12 +258,14 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               disableRipple
               sx={{ pl: 4 }}
+              onClick={handleOpenTHM}
             >
-              <ListItemIcon sx={{ color: "RoyalBlue" }}>
+              <ListItemIcon sx={{ color: "Tomato" }}>
                 <WallpaperIcon />
               </ListItemIcon>
               <ListItemText primary="Theme" />
             </ListItemButton>            
+            <ModalTheme open={modalTheme} onClose={handleCloseTHM} />
           </List>
         </Collapse>
       </List>

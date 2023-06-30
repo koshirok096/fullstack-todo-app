@@ -1,5 +1,6 @@
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+// import * as React from 'react';
+import React, { useState } from "react";
+import { styled, alpha, useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -21,21 +22,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal, closeModal } from '../redux/modalTaskSlice'
 import { openSidebar, closeSidebar } from '../redux/openSidebarSlice'
 
-// const Search = styled('div')(({ theme }) => ({
-//     position: 'relative',
-//     borderRadius: theme.shape.borderRadius,
-//     backgroundColor: alpha(theme.palette.common.white, 0.15),
-//     '&:hover': {
-//       backgroundColor: alpha(theme.palette.common.white, 0.25),
-//     },
-//     marginRight: theme.spacing(2),
-//     marginLeft: 0,
-//     width: '100%',
-//     [theme.breakpoints.up('sm')]: {
-//       marginLeft: theme.spacing(3),
-//       width: 'auto',
-//     },
-//   }));  
+import Checkbox from "@mui/material/Checkbox";
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+
+import Link from '@mui/material/Link';
+
+
+interface RootState {
+  modal: {
+    open: boolean;
+  };
+  modalTheme: {
+    open: boolean;
+  };
+  sidebar: {
+    open: boolean;
+  };
+}
 
 function Header() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -80,7 +84,11 @@ function Header() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+      <Link href="/register" variant="body2" sx={{fontSize:'16px'}}>
+        Logout
+      </Link>
+      </MenuItem>
     </Menu>
   );
 
@@ -143,22 +151,14 @@ function Header() {
 
   // MY MEMO: code for modal with redux
 
-  const dispatch = useDispatch();
-  interface RootState {
-    modal: {
-      open: boolean;
-    };
-    sidebar: {
-      open: boolean;
-    }
-  }  
-
+  const dispatch = useDispatch();    
+  
   // const isOpen = useSelector((state: RootState) => state.modal.open);
 
   const { modal, sidebar } = useSelector((state: RootState) => ({
     modal: state.modal.open,
     sidebar: state.sidebar.open,
-  }));
+    }));
 
   
   const handleOpenMTD = () => {
@@ -179,22 +179,40 @@ function Header() {
     dispatch(closeSidebar());
   };
 
+  // darkmode header
 
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+    const [darkMode, setDarkMode] = useState(false);
+  
+    const handleToggle = () => {
+      setDarkMode(!darkMode);
+    };
+      
+  
   return (
     <>
       <AppBar
        position="static"
-       style={{ 
-        color:'black',
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        boxShadow: 'none'
-       }}
+       style={{
+        transition: 'all 0.6s ease-in-out',
+        backgroundColor: !darkMode ? 'rgba(249, 248, 241, 0.95)' : 'rgba(33, 33, 33, 0.95)',
+        color: !darkMode ? 'black' : 'white',
+        // backgroundColor: 'white',
+        // backgroundColor: darkMode
+        boxShadow: 'none',
+        }}
        >
         <Toolbar
         sx={{ height: '64px' }}
         >
             <IconButton 
-              sx = {{ color:"grey", mr:1 }}
+              sx = {{
+                 color:"grey",
+                 mr:1,
+                 transition: 'all 0.1s ease',
+                 ...(!sidebar ? { transform: 'rotate(90deg)' } : {}),
+                }}
               size="large"
               edge="end"
               aria-label="open sidebar"
@@ -264,6 +282,16 @@ function Header() {
             >
               <AccountCircle />
             </IconButton>
+            <Checkbox
+                  {...label}
+                  disableRipple
+                  icon={<DarkModeIcon />}
+                  checkedIcon={<DarkModeOutlinedIcon sx={{ color: "Orange" }} />}
+                  checked={darkMode}
+                  onChange={handleToggle}            
+                  sx={{ pr: 4, color: "MediumSlateBlue" }}
+                />
+
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton

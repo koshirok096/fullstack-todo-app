@@ -80,7 +80,7 @@ function Stopwatch() {
   return (
     <>
       <Box sx={{ color: "white", display:"flex", flexDirection:'column', justifyContent:'center', textAlign:'center', pr:3 }}>
-        <Typography sx={{ m: 0, fontWeight:'bold', color:'Chartreuse' }}><span>ACT: </span>{formatTime(time)}</Typography>
+        <Typography sx={{ m: 0, fontWeight:'bold', color:'Chartreuse', fontSize: "1.2rem" }}><span>ACT: </span>{formatTime(time)}</Typography>
         <Box sx={{}}>
           <IconButton
             aria-label="start"
