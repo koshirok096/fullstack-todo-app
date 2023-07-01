@@ -1,4 +1,6 @@
-import * as React from 'react';
+// import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,9 +10,20 @@ import { RootState } from '../redux/store';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
-import Todo from './Todo'
+import Todo from './Todo';
+import loading from '../loading.gif';
+
+import { loginStart } from '../redux/userSlice';
 
 function Main() {
+  const [isLoading, setLoading] = useState(true);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  // const isLoading = useSelector((state: RootState) => state.user.isLoading);
+  const Navigate = useNavigate();
+
+  console.log(currentUser); // ユーザー情報をコンソールに出力する例
+  console.log('currentUser ha dou datta?');
+
 
   // MY MEMO: code for modal without redux
 
@@ -27,6 +40,12 @@ function Main() {
   // MY MEMO: code for modal with redux
 
   const dispatch = useDispatch();
+  
+
+  useEffect(() => {
+    // コンポーネントのマウント時にユーザー情報を取得する
+    dispatch(loginStart());
+  }, [dispatch]);
 
   // const isOpen = useSelector((state: RootState) => state.modal.open);
 
@@ -48,6 +67,39 @@ function Main() {
 
   const backgroundImage = useSelector((state: RootState) => state.unsplashGetImage.copiedImageUrl);
 
+
+
+  useEffect(() => {
+    if (!currentUser) {
+      Navigate('/register');
+    } else {
+      setLoading(false);
+    }
+  }, [currentUser, Navigate]);
+
+  if (isLoading) {
+    // Render a loading indicator while the user data is being fetched
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <img
+          src={loading}
+          alt="mainlogo"
+          width="150px"
+          height="150px"
+          style={{
+            padding: '12px',
+          }}
+        />
+      </Box>
+    );
+  }
   return (
     <Box sx={{
       flexGrow: 1,
@@ -60,7 +112,7 @@ function Main() {
       }}>
       <Header />
       <Sidebar open={sidebar} onClose={handleCloseSidebar} />
-      <Todo />
+      <Todo currentUser={currentUser} />
     </Box>
   );
 }

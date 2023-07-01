@@ -21,6 +21,7 @@ import logo from '../main-logo.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, closeModal } from '../redux/modalTaskSlice'
 import { openSidebar, closeSidebar } from '../redux/openSidebarSlice'
+import { logoutUser } from '../redux/userSlice';
 
 import Checkbox from "@mui/material/Checkbox";
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
@@ -66,6 +67,11 @@ function Header() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleLogout = () => {
+    // Dispatch the logout action
+    dispatch(logoutUser());
+  };
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -84,7 +90,7 @@ function Header() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={handleLogout}>
       <Link href="/register" variant="body2" sx={{fontSize:'16px'}}>
         Logout
       </Link>

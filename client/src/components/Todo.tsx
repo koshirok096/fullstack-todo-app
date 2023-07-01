@@ -30,8 +30,11 @@ import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { openSidebar, closeSidebar } from '../redux/openSidebarSlice'
 
+interface TodoProps {
+  currentUser: string | null;
+}
 
-function Todo() {
+const Todo: React.FC<TodoProps> = ({ currentUser }) => {
   const [checked, setChecked] = useState([0]);
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -88,7 +91,7 @@ function Todo() {
         // width: 100%
       }}
     >
-      <UpperInfoBar />
+      <UpperInfoBar currentUser={currentUser} />
       <List
         sx={{
           //  width: '100%',
