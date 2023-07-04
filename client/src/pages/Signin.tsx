@@ -11,9 +11,17 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { loginStart, loginSuccess, loginFailed } from "../redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailed,
+  setUserId,
+  setAccessToken,
+  updateBackground
+} from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../redux/store";
 
 import mood3 from "../mood-3-min.png";
 
@@ -43,6 +51,8 @@ function Signin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+
   useEffect(() => {
     const isValid = username !== "" && password.length >= 6;
     setIsFormValid(isValid);
@@ -56,7 +66,7 @@ function Signin() {
       setPassword(value);
     }
   };
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const username = data.get("username") as string;
@@ -75,6 +85,12 @@ function Signin() {
 
       if (response.status === 200) {
         dispatch(loginSuccess(username)); // ログイン成功のアクションをディスパッチ
+        dispatch(setUserId(response.data._id)); // Dispatch the setUserId action
+        dispatch(setAccessToken(response.data.token)); // Set the access token in Redux state
+        // console.log(response.data.token); // アクセストークンをコンソールに表示
+        // console.log(accessToken); // ?
+        dispatch(updateBackground(response.data.bgwallpaper));
+        // console.log(response.data.bgwallpaper);
         navigate("/");
         console.log("Signin successful!");
       } else {
@@ -118,6 +134,7 @@ function Signin() {
               alignItems: "center",
               height: "100vh",
               pb: 3,
+              mx: 3,
             }}>
             {/* <Box
               sx={{
@@ -175,7 +192,7 @@ function Signin() {
               component="form"
               noValidate
               onSubmit={handleSubmit}
-              sx={{ mt: 1 }}>
+              sx={{ mt: 1, mx: 3 }}>
               <TextField
                 margin="normal"
                 required

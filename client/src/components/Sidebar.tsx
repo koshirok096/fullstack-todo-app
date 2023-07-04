@@ -4,46 +4,37 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
 import InboxIcon from "@mui/icons-material/Inbox";
 
+import Divider from '@mui/material/Divider';
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
-import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
+import BookmarksOutlinedIcon from "@mui/icons-material/BookmarksOutlined";
 import CabinIcon from "@mui/icons-material/Cabin";
-import ShapeLineIcon from '@mui/icons-material/ShapeLine';
-import AddTaskIcon from '@mui/icons-material/AddTask';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import StyleIcon from '@mui/icons-material/Style';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import WallpaperIcon from '@mui/icons-material/Wallpaper';
+import ShapeLineIcon from "@mui/icons-material/ShapeLine";
+import AddTaskIcon from "@mui/icons-material/AddTask";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import StyleIcon from "@mui/icons-material/Style";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import Switch from '@mui/material/Switch';
+import Switch from "@mui/material/Switch";
+import { RootState } from "../redux/store";
 
-import { useDispatch, useSelector } from 'react-redux';
-import { openModal, closeModal } from '../redux/modalTaskSlice';
-import { openModalTheme, closeModalTheme } from '../redux/modalThemeSlice';
-import ModalTheme from './ModalTheme';
+import { useDispatch, useSelector } from "react-redux";
+import { openModal, closeModal } from "../redux/modalTaskSlice";
+import { openModalTheme, closeModalTheme } from "../redux/modalThemeSlice";
+import ModalTheme from "./ModalTheme";
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
+  bgwallpaper: string | null;
+  userId: string | null;
+  accessToken: string;
 }
-
-interface RootState {
-  modal: {
-    open: boolean;
-  };
-  modalTheme: {
-    open: boolean;
-  };
-  sidebar: {
-    open: boolean;
-  };
-}
-
 
 function Sidebar(props: SidebarProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -61,23 +52,23 @@ function Sidebar(props: SidebarProps) {
     setOpenS(!open_s);
   };
 
-  const [checked_d, setCheckedD] = React.useState(['Dark Mode']);
+  const [checked_d, setCheckedD] = React.useState(["Dark Mode"]);
 
   const handleToggle_d = (value: string) => () => {
     const currentIndex = checked_d.indexOf(value);
     const newCheckedD = [...checked_d];
-  
+
     if (currentIndex === -1) {
       newCheckedD.push(value);
     } else {
       newCheckedD.splice(currentIndex, 1);
     }
-  
+
     setCheckedD(newCheckedD);
-    setDarkModeChecked(newCheckedD.includes('Dark Mode')); // setDarkModeCheckedの代わりにsetDarkModeを使用
+    setDarkModeChecked(newCheckedD.includes("Dark Mode")); // setDarkModeCheckedの代わりにsetDarkModeを使用
   };
-  
-  const [checked_t, setCheckedT] = React.useState(['Theme']);
+
+  const [checked_t, setCheckedT] = React.useState(["Theme"]);
 
   const handleToggle_t = (value: string) => () => {
     const currentIndex = checked_t.indexOf(value);
@@ -125,7 +116,9 @@ function Sidebar(props: SidebarProps) {
     dispatch(closeModalTheme());
   };
 
-  const [darkModeChecked, setDarkModeChecked] = React.useState(checked_d.indexOf('Dark Mode') !== -1);
+  const [darkModeChecked, setDarkModeChecked] = React.useState(
+    checked_d.indexOf("Dark Mode") !== -1
+  );
 
   return (
     <Box
@@ -133,16 +126,18 @@ function Sidebar(props: SidebarProps) {
         width: "100%",
         height: "calc(100vh - 64px)",
         maxWidth: 360,
-        backgroundColor: darkModeChecked ? 'rgba(249, 248, 241, 0.85)' : 'rgba(33, 33, 33, 0.85)',
-        color: darkModeChecked ? 'inherit' : 'Ivory',    
-        transform: open ? 'translateX(0)' : 'translateX(-100%)'
+        backgroundColor: darkModeChecked
+          ? "rgba(249, 248, 241, 0.75)"
+          : "rgba(33, 33, 33, 0.75)",
+        color: darkModeChecked ? "inherit" : "Ivory",
+        transform: open ? "translateX(0)" : "translateX(-100%)",
+        backdropFilter: 'blur(3px)',
+        borderRight: '1px gray solid',
       }}
-      style={{ transition: 'all 0.6s ease-in-out' }}
-    >
-      <List sx={{pt:0, pb:0}} component="nav" aria-label="workspace">
-        
+      style={{ transition: "all 0.6s ease-in-out" }}>
+      <List sx={{ pt: 0, pb: 0, }} component="nav" aria-label="workspace">
         <ListItemButton onClick={handleClick_w} disableRipple>
-          <ListItemIcon sx={{ color: darkModeChecked ? '#626262' : 'Ivory', }}>
+          <ListItemIcon sx={{ color: darkModeChecked ? "#626262" : "Ivory" }}>
             <CabinIcon />
           </ListItemIcon>
           <ListItemText primary="Workspace" />
@@ -153,19 +148,16 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               sx={{ pl: 4 }}
               selected={selectedIndex === 0}
-              onClick={(event) => handleListItemClick(event, 0)}
-            >
+              onClick={(event) => handleListItemClick(event, 0)}>
               <ListItemIcon sx={{ color: "SlateBlue" }}>
                 <InboxIcon />
               </ListItemIcon>
               <ListItemText primary="Inbox" />
             </ListItemButton>
-            
             <ListItemButton
               sx={{ pl: 4 }}
               selected={selectedIndex === 1}
-              onClick={(event) => handleListItemClick(event, 1)}
-            >
+              onClick={(event) => handleListItemClick(event, 1)}>
               <ListItemIcon sx={{ color: "Coral" }}>
                 <WorkspacesIcon />
               </ListItemIcon>
@@ -174,8 +166,7 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               sx={{ pl: 4 }}
               selected={selectedIndex === 2}
-              onClick={(event) => handleListItemClick(event, 2)}
-            >
+              onClick={(event) => handleListItemClick(event, 2)}>
               <ListItemIcon sx={{ color: "SteelBlue" }}>
                 <TaskAltIcon />
               </ListItemIcon>
@@ -184,8 +175,7 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               sx={{ pl: 4 }}
               selected={selectedIndex === 3}
-              onClick={(event) => handleListItemClick(event, 3)}
-            >
+              onClick={(event) => handleListItemClick(event, 3)}>
               <ListItemIcon sx={{ color: "Crimson" }}>
                 <BookmarksOutlinedIcon />
               </ListItemIcon>
@@ -194,9 +184,10 @@ function Sidebar(props: SidebarProps) {
           </List>
         </Collapse>
       </List>
-      <List sx={{pt:0, pb:0}}  component="nav" aria-label="action">
+      <Divider sx={{ background: darkModeChecked ? "unset" : "gray" }} />
+      <List sx={{ pt: 0, pb: 0 }} component="nav" aria-label="action">
         <ListItemButton onClick={handleClick_a} disableRipple>
-        <ListItemIcon sx={{ color: darkModeChecked ? '#626262' : 'Ivory', }}>
+          <ListItemIcon sx={{ color: darkModeChecked ? "#626262" : "Ivory" }}>
             <ShapeLineIcon />
           </ListItemIcon>
           <ListItemText primary="Action" />
@@ -207,8 +198,7 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               disableRipple
               sx={{ pl: 4 }}
-              onClick={handleOpenMTD}
-            >
+              onClick={handleOpenMTD}>
               <ListItemIcon sx={{ color: "SandyBrown" }}>
                 <AddTaskIcon />
               </ListItemIcon>
@@ -217,20 +207,19 @@ function Sidebar(props: SidebarProps) {
             <ListItemButton
               disableRipple
               sx={{ pl: 4 }}
-              onClick={(event) => handleListItemClick(event, 5)}
-            >
+              onClick={(event) => handleListItemClick(event, 5)}>
               <ListItemIcon sx={{ color: "SeaGreen" }}>
                 <RemoveCircleOutlineIcon />
               </ListItemIcon>
               <ListItemText primary="Delete Selected Tasks" />
-            </ListItemButton>           
+            </ListItemButton>
           </List>
         </Collapse>
       </List>
-      <List sx={{pt:0, pb:0}}  component="nav" aria-label="style">
-        
+      <Divider sx={{ background: darkModeChecked ? "unset" : "gray" }} />
+      <List sx={{ pt: 0, pb: 0 }} component="nav" aria-label="style">
         <ListItemButton onClick={handleClick_s} disableRipple>
-        <ListItemIcon sx={{ color: darkModeChecked ? '#626262' : 'Ivory', }}>
+          <ListItemIcon sx={{ color: darkModeChecked ? "#626262" : "Ivory" }}>
             <StyleIcon />
           </ListItemIcon>
           <ListItemText primary="Style" />
@@ -238,38 +227,39 @@ function Sidebar(props: SidebarProps) {
         </ListItemButton>
         <Collapse in={open_s} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton
-              disableRipple
-              sx={{ pl: 4 }}
-            >
+            <ListItemButton disableRipple sx={{ pl: 4 }}>
               <ListItemIcon sx={{ color: "MediumSlateBlue" }}>
                 <DarkModeOutlinedIcon />
               </ListItemIcon>
               <ListItemText primary="Dark Mode" />
               <Switch
                 edge="end"
-                onChange={handleToggle_d('Dark Mode')}
+                onChange={handleToggle_d("Dark Mode")}
                 checked={!darkModeChecked}
                 inputProps={{
-                  'aria-labelledby': 'switch-list-label-darkmode',
+                  "aria-labelledby": "switch-list-label-darkmode",
                 }}
               />
-            </ListItemButton>            
+            </ListItemButton>
             <ListItemButton
               disableRipple
               sx={{ pl: 4 }}
-              onClick={handleOpenTHM}
-            >
+              onClick={handleOpenTHM}>
               <ListItemIcon sx={{ color: "Tomato" }}>
                 <WallpaperIcon />
               </ListItemIcon>
               <ListItemText primary="Theme" />
-            </ListItemButton>            
-            <ModalTheme open={modalTheme} onClose={handleCloseTHM} />
+            </ListItemButton>
+            <ModalTheme
+              open={modalTheme}
+              onClose={handleCloseTHM}
+              bgwallpaper={props.bgwallpaper}
+              userId={props.userId}
+              accessToken={props.accessToken}
+            />
           </List>
         </Collapse>
       </List>
-
     </Box>
   );
 }

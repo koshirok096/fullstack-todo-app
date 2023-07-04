@@ -3,12 +3,13 @@ import mongoose from 'mongoose';
 const taskSchema = new mongoose.Schema({
   taskTitle: {
     type: String,
-    required: true
+    required: true,
+    default: ''
   },
   estimatedTime: {
     type: Number,
     required: true,
-    default: '0:00'
+    default: 0
   },
   actualTime: {
     type: Number

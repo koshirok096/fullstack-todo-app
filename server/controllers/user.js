@@ -1,6 +1,5 @@
-import { handleError } from "../error.js";
 import User from "../models/User.js";
-// import Tweet from "../models/Tweet.js";
+import { handleError } from "../error.js";
 
 // GET
 
@@ -27,5 +26,30 @@ export const deleteUser = async (req, res, next) => {
     }
   } else {
     return next(handleError(403, "You can only update your own account"));
+  }
+};
+
+// UPDATE WALLPAPER
+
+export const updateWallpaper = async (req, res, next) => {
+
+  const { id } = req.params;
+  const { bgwallpaper } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: { bgwallpaper } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
 };

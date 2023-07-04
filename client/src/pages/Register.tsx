@@ -17,6 +17,7 @@ import {
   loginSuccess,
   loginFailed,
   setUser,
+  setUserId,
 } from "../redux/userSlice";
 import { RootState } from "../redux/store";
 
@@ -43,7 +44,6 @@ function Register() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -103,10 +103,10 @@ function Register() {
 
       if (response.status === 200 || response.status === 201) {
         dispatch(loginSuccess(username)); // ログイン成功のアクションをディスパッチ
-        // dispatch(setUser(currentUser)); // ユーザー情報を更新するアクションをディスパッチ
-        // console.log(currentUser); // ユーザー情報をコンソールに出力する例
-        navigate("/");
-      } else {
+        dispatch(setUserId(response.data._id)); // Dispatch the setUserId action
+        // console.log(response.data._id); // ユーザーIDをコンソールに表示
+        navigate("/signin");
+        } else {
         setError(response.data.message);
       }
     } catch (error) {
@@ -119,7 +119,7 @@ function Register() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid container component="main" sx={{ height: "100vh"}}>
         <CssBaseline />
         <Grid
           item
@@ -146,6 +146,7 @@ function Register() {
               alignItems: "center",
               height: "100vh",
               pb: 3,
+              mx: 3
             }}>
             <Box
               sx={{
@@ -201,7 +202,7 @@ function Register() {
               component="form"
               noValidate
               onSubmit={handleSubmit}
-              sx={{ mt: 1 }}>
+              sx={{ mt: 1, mx:3 }}>
               <TextField
                 margin="normal"
                 required
